@@ -1,0 +1,96 @@
+version: '3.7'
+x-node:
+  &default-node
+  build: ./node
+  env_file:
+    - ./secret/node.env
+    - ./secret/control.env
+  secrets:
+    - authorized_keys
+  tty: true
+  tmpfs:
+    - /run:size=100M
+    - /run/lock:size=100M
+  volumes:
+    - "jepsen-shared:/var/jepsen/shared"
+    - "ld-shared:/data/store"
+    - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+  networks:
+    - jepsen
+  cap_add:
+    - ALL
+  ports:
+    - ${JEPSEN_PORT:-22}
+
+volumes:
+  jepsen-shared:
+  ld-shared:
+
+secrets:
+  authorized_keys:
+    file: ./secret/authorized_keys
+
+networks:
+  jepsen:
+
+services:
+  logdevice:
+    container_name: jepsen-ld
+    hostname: ld
+    build: ./ld
+    env_file: ./secret/node.env
+    secrets:
+      - authorized_keys
+    tmpfs:
+      - /run:size=100M
+      - /run/lock:size=100M
+    expose:
+      - "38000-49000"
+    networks:
+      - jepsen
+    cap_add:
+      - ALL
+    volumes:
+      - "jepsen-shared:/var/jepsen/shared"
+      - "ld-shared:/data/store"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+
+  zookeeper:
+    container_name: jepsen-zookeeper
+    hostname: zk
+    build: ./zk
+    env_file: ./secret/node.env
+    secrets:
+      - authorized_keys
+    tmpfs:
+      - /run:size=100M
+      - /run/lock:size=100M
+    expose:
+      - "2188"
+      - "2888"
+      - "3888"
+    networks:
+      - jepsen
+    cap_add:
+      - ALL
+    volumes:
+      - "jepsen-shared:/var/jepsen/shared"
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+
+  control:
+    container_name: jepsen-control
+    hostname: control
+    depends_on:
+%%DEPS%%
+    build: ./control
+    env_file: ./secret/control.env
+    privileged: true
+    expose:
+      - "22"
+      - "8080"
+    networks:
+      - jepsen
+    volumes:
+      - "${JEPSEN_WORK_DIR}:/home/Work"
+      - "jepsen-shared:/var/jepsen/shared"
+%%DBS%%
