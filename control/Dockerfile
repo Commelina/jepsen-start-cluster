@@ -30,7 +30,7 @@ RUN chmod +x /usr/bin/lein
 # without --dev flag up.sh copies jepsen to these subfolders
 # with --dev flag they are empty until mounted
 # RUN if [ -f /jepsen/jepsen/project.clj ]; then cd /jepsen/jepsen && lein install; fi
-COPY jepsen /jepsen/
+# COPY jepsen /jepsen/
 
 ADD ./bashrc /root/.bashrc
 ADD ./init.sh /init.sh

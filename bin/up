@@ -126,18 +126,6 @@ fi
 ## Build dockerfile
 bin/build-docker-compose $NODE_COUNT
 
-# Make sure folders referenced in control Dockerfile exist and don't contain leftover files
-rm -rf ./control/jepsen
-mkdir -p ./control/jepsen/jepsen
-# Copy the jepsen directory if we're not mounting the JEPSEN_ROOT
-if [ -z "${DEV}" ]; then
-    # Dockerfile does not allow `ADD ..`. So we need to copy it here in setup.
-    INFO "Copying .. to control/jepsen"
-    (
-        (cd ..; tar --exclude=./docker --exclude=./.git --exclude-ignore=.gitignore -cf - .)  | tar Cxf ./control/jepsen -
-    )
-fi
-
 if [ "${INIT_ONLY}" -eq 1 ]; then
     exit 0
 fi
