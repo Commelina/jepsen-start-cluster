@@ -1,7 +1,9 @@
 FROM hstreamdb/hstream
 
+ARG USE_CHINA_MIRROR
+
 # Mirror
-RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN if [ -n "$USE_CHINA_MIRROR" ] ; then sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list ; fi
 
 # Basic system stuff
 RUN apt-get update
