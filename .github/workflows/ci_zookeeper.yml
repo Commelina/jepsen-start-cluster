@@ -10,7 +10,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: ghcr.io/commelina/jepsen_zookeeper
+  IMAGE_NAME: ghcr.io/hstreandb/jepsen_zookeeper
 
 jobs:
   build:

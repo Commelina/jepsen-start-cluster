@@ -10,7 +10,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: ghcr.io/commelina/jepsen_logdevice
+  IMAGE_NAME: ghcr.io/hstreamdb/jepsen_logdevice
 
 jobs:
   build:
